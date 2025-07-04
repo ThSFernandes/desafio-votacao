@@ -1,1 +1,25 @@
-spring.application.name=desafio-votacao
+server:
+  port: 8081
+
+spring:
+  application:
+    group: desafio-tecnico
+    name: desafio-votacao
+
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: oracle.jdbc.OracleDriver
+    hikari:
+      maximum-pool-size: 5
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+
+logging:
+  level:
+    root: INFO
+    org.springframework: INFO
