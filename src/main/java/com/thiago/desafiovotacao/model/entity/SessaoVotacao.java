@@ -38,7 +38,7 @@ public class SessaoVotacao {
     private Pauta pauta;
 
 
-    @OneToMany(mappedBy = "ID_VOTO", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "sessaoVotacao", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Voto> votos;
 
 
