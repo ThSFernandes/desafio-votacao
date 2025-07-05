@@ -23,7 +23,7 @@ public class Pauta {
     private Long id;
 
     @Column(name = "TITULO")
-    private String Titulo;
+    private String titulo;
 
     @Column(name = "DESCRICAO")
     private String descricao;
