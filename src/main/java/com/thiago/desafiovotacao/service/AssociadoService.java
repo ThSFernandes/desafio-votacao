@@ -31,8 +31,12 @@ public class AssociadoService {
                         new EntityNotFoundException("Associado não encontrado (id=" + id + ")"));
     }
 
-    public void deletarAssociado(Long id){
+    public void deletarAssociado(Long id) {
+        if (!associadoRepository.existsById(id)) {
+            throw new EntityNotFoundException("Associado não encontrado (id=" + id + ")");
+        }
         associadoRepository.deleteById(id);
+        log.info("Associado deletado com sucesso ! (id=" + id + ")");
     }
 
 }

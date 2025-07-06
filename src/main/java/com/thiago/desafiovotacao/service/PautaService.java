@@ -39,7 +39,11 @@ public class PautaService {
     }
 
     public void deletarPauta(Long id) {
+        if (!pautaRepository.existsById(id)) {
+            throw new EntityNotFoundException("Associado não encontrado (id=" + id + ")");
+        }
         pautaRepository.delete(buscarEntidadePorId(id));
+        log.info("Pauta deletada com sucesso ! (id=" + id + ")");
     }
 
     private Pauta buscarEntidadePorId(Long id) {
