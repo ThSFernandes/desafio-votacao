@@ -1,13 +1,18 @@
 package com.thiago.desafiovotacao.service;
 
 import com.thiago.desafiovotacao.model.dtos.CriacaoSessaoVotacaoDto;
+import com.thiago.desafiovotacao.model.dtos.ResultadoSessaoDto;
 import com.thiago.desafiovotacao.model.dtos.SessaoVotacaoDto;
 import com.thiago.desafiovotacao.model.entity.Pauta;
 import com.thiago.desafiovotacao.model.entity.SessaoVotacao;
+import com.thiago.desafiovotacao.model.enums.StatusVotacao;
+import com.thiago.desafiovotacao.model.enums.TipoVoto;
 import com.thiago.desafiovotacao.model.mapper.SessaoVotacaoMapper;
 import com.thiago.desafiovotacao.repository.PautaRepository;
 import com.thiago.desafiovotacao.repository.SessaoVotacaoRepository;
+import com.thiago.desafiovotacao.repository.VotoRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,7 +28,9 @@ public class SessaoVotacaoService {
     private final SessaoVotacaoRepository sessaoRepository;
     private final PautaRepository pautaRepository;
     private final SessaoVotacaoMapper mapper;
+    private final VotoRepository votoRepository;
 
+    @Transactional
     public SessaoVotacaoDto criarSessaoVotacao(Long idPauta, CriacaoSessaoVotacaoDto dto) {
 
         Pauta pauta = pautaRepository.findById(idPauta)
@@ -46,13 +53,57 @@ public class SessaoVotacaoService {
         return mapper.sessaoVotacaoParaSessaoDto(sessaoRepository.save(sessao));
     }
 
-    public SessaoVotacaoDto buscarSessaoPorId(Long sessaoId) {
+    public SessaoVotacaoDto buscarSessaoPorIdDetalhado(Long idSessao) {
+        SessaoVotacao entidade = buscarSessao(idSessao);
 
-        SessaoVotacao entidade = sessaoRepository.findById(sessaoId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Sessão de votação não encontrada (id=" + sessaoId + ")"));
-
+        validarStatusDaSessao(entidade);
         return mapper.sessaoVotacaoParaSessaoDto(entidade);
     }
+
+    public ResultadoSessaoDto buscarSessaoPorIdParaResultado (Long idSessao){
+        SessaoVotacao sessao = buscarSessao(idSessao);
+
+        validarStatusDaSessao(sessao);
+
+        long votosSim = buscarQuantidadePorTipo(sessao,TipoVoto.SIM);
+        long votosNao = buscarQuantidadePorTipo(sessao,TipoVoto.NAO);
+        long totalVotos = votosSim + votosNao;
+
+        return mapper.toResultadoSessaoDto(sessao, votosSim, votosNao, totalVotos, sessao.getStatusVotacao());
+    }
+
+    public void validarStatusDaSessao(SessaoVotacao sessaoVotacao) {
+        if (sessaoVotacao.getStatusVotacao() == StatusVotacao.EM_ANDAMENTO &&
+                LocalDateTime.now().isAfter(sessaoVotacao.getDataDeTermino())) {
+            apurarResultado(sessaoVotacao);
+        }
+    }
+
+    public void apurarResultado(SessaoVotacao sessao) {
+        long votosSim = buscarQuantidadePorTipo(sessao,TipoVoto.SIM);
+        long votosNao = buscarQuantidadePorTipo(sessao,TipoVoto.NAO);
+
+        if (votosSim > votosNao) {
+            sessao.setStatusVotacao(StatusVotacao.APROVADO);
+        } else if (votosNao > votosSim) {
+            sessao.setStatusVotacao(StatusVotacao.REPROVADO);
+        } else {
+            sessao.setStatusVotacao(StatusVotacao.EMPATE);
+        }
+        sessaoRepository.save(sessao);
+
+    }
+
+    private SessaoVotacao buscarSessao(Long idSessao) {
+        return sessaoRepository.findById(idSessao)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Sessão de votação não encontrada (id=" + idSessao + ")"));
+    }
+
+    private long buscarQuantidadePorTipo (SessaoVotacao sessao, TipoVoto tipoVoto){
+        return votoRepository.countBySessaoVotacaoAndTipoVoto(sessao, tipoVoto);
+    }
+
+
 }
 
