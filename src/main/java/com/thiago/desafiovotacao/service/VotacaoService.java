@@ -1,7 +1,9 @@
 package com.thiago.desafiovotacao.service;
 
 import com.thiago.desafiovotacao.model.dtos.CriarVotacaoDto;
+import com.thiago.desafiovotacao.model.dtos.ItemVotoDto;
 import com.thiago.desafiovotacao.model.dtos.VotacaoDto;
+import com.thiago.desafiovotacao.model.dtos.VotoDetalhadoDto;
 import com.thiago.desafiovotacao.model.entity.Associado;
 import com.thiago.desafiovotacao.model.entity.SessaoVotacao;
 import com.thiago.desafiovotacao.model.entity.Voto;
@@ -11,11 +13,13 @@ import com.thiago.desafiovotacao.repository.AssociadoRepository;
 import com.thiago.desafiovotacao.repository.SessaoVotacaoRepository;
 import com.thiago.desafiovotacao.repository.VotoRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -26,27 +30,15 @@ public class VotacaoService {
     private final SessaoVotacaoRepository sessaoRepository;
     private final AssociadoRepository associadoRepository;
     private final VotoMapper mapper;
+    private final SessaoVotacaoService sessaoVotacaoService;
 
+    @Transactional
+    public VotacaoDto criarVoto(Long idSessao, Long idAssociado, CriarVotacaoDto dto) {
 
-    public VotacaoDto criarVoto(Long sessaoId, Long associadoId, CriarVotacaoDto dto) {
+        SessaoVotacao sessao = buscarSessao(idSessao);
+        verificarStatusDaSessao(sessao);
 
-        SessaoVotacao sessao = sessaoRepository.findById(sessaoId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Sessão não encontrada (id=" + sessaoId + ")"));
-
-        Associado associado = associadoRepository.findById(associadoId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Associado não encontrado (id=" + associadoId + ")"));
-
-        boolean sessaoFechadaPeloStatus =
-                sessao.getStatusVotacao() != StatusVotacao.EM_ANDAMENTO;
-
-        boolean sessaoFechadaPeloHorario =
-                LocalDateTime.now().isAfter(sessao.getDataDeTermino());
-
-        if (sessaoFechadaPeloStatus || sessaoFechadaPeloHorario) {
-            throw new IllegalStateException("Sessão encerrada para votação.");
-        }
+        Associado associado = buscarAssociado(idAssociado);
 
         if (votoRepository.existsByAssociadoAndSessaoVotacao(associado, sessao)) {
             throw new IllegalStateException("Associado já registrou voto nesta sessão.");
@@ -56,7 +48,8 @@ public class VotacaoService {
         voto.setAssociado(associado);
         voto.setSessaoVotacao(sessao);
         voto = votoRepository.save(voto);
-        log.info("Voto salvo (id={})", voto.getId());
+        log.info("Voto salvo (id={}, sessao={}, associado={})",
+                voto.getId(), idSessao, idAssociado);
 
         return mapper.votoParaVotacaoDto(voto);
     }
@@ -68,7 +61,41 @@ public class VotacaoService {
         return mapper.votoParaVotacaoDto(voto);
     }
 
-    public void deletarVoto(Long votoId) {
-        votoRepository.deleteById(votoId);
+    public VotoDetalhadoDto listarVotosDoAssociado(Long idAssociado) {
+
+        Associado associado = buscarAssociado(idAssociado);
+        List<Voto> votos = votoRepository.findByAssociado(associado);
+        List<ItemVotoDto> itens = mapper.votosParaItemVotoDtos(votos);
+
+        VotoDetalhadoDto dto =
+                new VotoDetalhadoDto(associado.getId(), associado.getNome(), itens);
+
+        log.info("Encontrados {} votos para associado {}", itens.size(), idAssociado);
+        return dto;
+    }
+
+    private SessaoVotacao buscarSessao(Long id) {
+        return sessaoRepository.findById(id)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Sessão não encontrada (id=" + id + ")"));
+    }
+
+    private Associado buscarAssociado(Long id) {
+        return associadoRepository.findById(id)
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Associado não encontrado (id=" + id + ")"));
+    }
+
+    private void verificarStatusDaSessao(SessaoVotacao sessao) {
+        boolean expirou = LocalDateTime.now().isAfter(sessao.getDataDeTermino());
+        boolean statusAberto = sessao.getStatusVotacao() == StatusVotacao.EM_ANDAMENTO;
+
+        if (expirou && statusAberto) {
+            sessaoVotacaoService.apurarResultado(sessao);  // reaproveita regra já existente
+            throw new IllegalStateException("Sessão encerrada; consulte o resultado.");
+        }
+        if (!statusAberto) {
+            throw new IllegalStateException("Sessão encerrada; consulte o resultado.");
+        }
     }
 }

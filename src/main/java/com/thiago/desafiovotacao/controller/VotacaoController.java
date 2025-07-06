@@ -2,9 +2,9 @@ package com.thiago.desafiovotacao.controller;
 
 import com.thiago.desafiovotacao.model.dtos.CriarVotacaoDto;
 import com.thiago.desafiovotacao.model.dtos.VotacaoDto;
+import com.thiago.desafiovotacao.model.dtos.VotoDetalhadoDto;
 import com.thiago.desafiovotacao.service.VotacaoService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,8 +26,10 @@ public class VotacaoController {
         return votacaoService.buscarVotoPorId(idVoto);
     }
 
-    @DeleteMapping("/votos/{idVoto}")
-    public void deletarVoto(@PathVariable Long idVoto) {
-        votacaoService.deletarVoto(idVoto);
+    @GetMapping("/associado/{idAssociado}/votos")
+    public VotoDetalhadoDto listarVotosDoAssociado(@PathVariable Long idAssociado) {
+        return votacaoService.listarVotosDoAssociado(idAssociado);
+
     }
+
 }
