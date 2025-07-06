@@ -6,9 +6,10 @@ import com.thiago.desafiovotacao.model.entity.SessaoVotacao;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = VotoMapper.class)
 public interface SessaoVotacaoMapper {
 
+    @Mapping(target = "idPauta", source = "pauta.id")
     SessaoVotacaoDto sessaoVotacaoParaSessaoDto(SessaoVotacao entidade);
 
     @Mapping(target = "id", ignore = true)

@@ -1,7 +1,5 @@
 package com.thiago.desafiovotacao.model.dtos;
 
-import com.thiago.desafiovotacao.model.entity.Pauta;
-import com.thiago.desafiovotacao.model.entity.Voto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +17,6 @@ public class SessaoVotacaoDto {
     private Long id;
     private LocalDateTime dataDeCriacao;
     private LocalDateTime dataDeTermino;
-    private Pauta pauta;
-    private List<Voto> votos;
+    private Long idPauta;
+    private List<VotacaoDto> votos;
 }
