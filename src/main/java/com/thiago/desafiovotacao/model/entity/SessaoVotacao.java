@@ -25,10 +25,10 @@ public class SessaoVotacao {
     private Long id;
 
     @Column(name = "DATA_INICIO_VOTACAO")
-    private LocalDateTime dataDeCriacao = LocalDateTime.now();
+    private LocalDateTime dataDeCriacao;
 
     @Column(name = "DATA_TERMINO_VOTACAO")
-    private LocalDateTime localDateTime = dataDeCriacao.plusMinutes(1);
+    private LocalDateTime dataDeTermino;
 
     @Enumerated(EnumType.STRING)
     private StatusVotacao statusVotacao = StatusVotacao.EM_ANDAMENTO;

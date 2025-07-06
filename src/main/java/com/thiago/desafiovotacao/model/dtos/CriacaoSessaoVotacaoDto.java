@@ -16,9 +16,6 @@ import java.util.List;
 @NoArgsConstructor
 public class CriacaoSessaoVotacaoDto {
 
-    private Long id;
-    private LocalDateTime dataDeCriacao;
-    private LocalDateTime dataDeTermino;
-    private Pauta pauta;
-    private List<Voto> votos;
+    private Integer duracaoMinutos;
+
 }
