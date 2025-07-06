@@ -5,6 +5,8 @@ import com.thiago.desafiovotacao.model.dtos.VotacaoDto;
 import com.thiago.desafiovotacao.model.dtos.VotoDetalhadoDto;
 import com.thiago.desafiovotacao.service.VotacaoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,20 +17,23 @@ public class VotacaoController {
     private final VotacaoService votacaoService;
 
     @PostMapping("/{idSesao}/associados/{idAssociado}/votos")
-    public VotacaoDto criarVoto(@PathVariable Long idSesao,
-                                @PathVariable Long idAssociado,
-                                @RequestBody CriarVotacaoDto dto) {
-        return votacaoService.criarVoto(idSesao, idAssociado, dto);
+    public ResponseEntity<VotacaoDto> criarVoto(@PathVariable Long idSesao,
+                                                @PathVariable Long idAssociado,
+                                                @RequestBody CriarVotacaoDto dto) {
+        VotacaoDto votacaoDto = votacaoService.criarVoto(idSesao, idAssociado, dto);
+        return new ResponseEntity<>(votacaoDto, HttpStatus.CREATED);
     }
 
     @GetMapping("/votos/{idVoto}")
-    public VotacaoDto buscarVoto(@PathVariable Long idVoto) {
-        return votacaoService.buscarVotoPorId(idVoto);
+    public ResponseEntity<VotacaoDto> buscarVoto(@PathVariable Long idVoto) {
+        VotacaoDto votacaoDto = votacaoService.buscarVotoPorId(idVoto);
+        return new ResponseEntity<>(votacaoDto, HttpStatus.OK);
     }
 
     @GetMapping("/associado/{idAssociado}/votos")
-    public VotoDetalhadoDto listarVotosDoAssociado(@PathVariable Long idAssociado) {
-        return votacaoService.listarVotosDoAssociado(idAssociado);
+    public ResponseEntity<VotoDetalhadoDto> listarVotosDoAssociado(@PathVariable Long idAssociado) {
+        VotoDetalhadoDto votoDetalhadoDto = votacaoService.listarVotosDoAssociado(idAssociado);
+        return new ResponseEntity<>(votoDetalhadoDto, HttpStatus.OK);
 
     }
 

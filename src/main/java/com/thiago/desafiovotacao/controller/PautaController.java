@@ -3,6 +3,8 @@ package com.thiago.desafiovotacao.controller;
 import com.thiago.desafiovotacao.model.dtos.PautaDto;
 import com.thiago.desafiovotacao.service.PautaService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -13,22 +15,26 @@ public class PautaController {
     private final PautaService pautaService;
 
     @PostMapping
-    public PautaDto criarPauta(@RequestBody PautaDto pauta) {
-        return pautaService.criarPauta(pauta);
+    public ResponseEntity<PautaDto> criarPauta(@RequestBody PautaDto pauta) {
+        PautaDto pautaDto = pautaService.criarPauta(pauta);
+        return new ResponseEntity<>(pautaDto, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public PautaDto buscarPauta(@PathVariable("id") Long id) {
-        return pautaService.buscarPautaPeloId(id);
+    public ResponseEntity<PautaDto> buscarPauta(@PathVariable("id") Long id) {
+        PautaDto pautaDto = pautaService.buscarPautaPeloId(id);
+        return new ResponseEntity<>(pautaDto, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public PautaDto atualizarPauta(@PathVariable("id") Long id, @RequestBody PautaDto pautaAtualizar) {
-        return pautaService.atualizarPauta(id, pautaAtualizar);
+    public ResponseEntity<PautaDto> atualizarPauta(@PathVariable("id") Long id, @RequestBody PautaDto pautaAtualizar) {
+        PautaDto pautaDto = pautaService.atualizarPauta(id, pautaAtualizar);
+        return new ResponseEntity<>(pautaDto, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public void deletarPauta(@PathVariable("id") Long id) {
+    public ResponseEntity<Void> deletarPauta(@PathVariable("id") Long id) {
         pautaService.deletarPauta(id);
+        return ResponseEntity.noContent().build();
     }
 }
