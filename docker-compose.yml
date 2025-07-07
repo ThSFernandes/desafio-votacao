@@ -1,0 +1,38 @@
+services:
+  oracle-db:
+    image: gvenzl/oracle-xe:21-slim
+    container_name: oracle-db
+    ports:
+      - "1521:1521"
+    environment:
+      ORACLE_PASSWORD: oracle
+      APP_USER: votacao
+      APP_USER_PASSWORD: votacao
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'SELECT 1 FROM DUAL;' | sqlplus -L votacao/votacao@localhost/freepdb1"]
+      interval: 20s
+      timeout: 10s
+      retries: 10
+
+  app:
+    build: .
+    container_name: desafio-votacao-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      oracle-db:
+        condition: service_healthy
+    environment:
+      DB_USER: votacao
+      DB_PASSWORD: votacao
+      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle-db:1521/freepdb1
+      SPRING_DATASOURCE_USERNAME: votacao
+      SPRING_DATASOURCE_PASSWORD: votacao
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: oracle.jdbc.OracleDriver
+      SPRING_FLYWAY_ENABLED: true
+      SPRING_FLYWAY_LOCATIONS: classpath:db/migration
+
+volumes:
+  oracle-data:
