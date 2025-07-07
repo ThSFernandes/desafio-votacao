@@ -1,5 +1,6 @@
 package com.thiago.desafiovotacao.controller;
 
+import com.thiago.desafiovotacao.controller.doc.PautaControllerDoc;
 import com.thiago.desafiovotacao.model.dtos.PautaDto;
 import com.thiago.desafiovotacao.service.PautaService;
 import jakarta.validation.Valid;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/pauta")
-public class PautaController {
+public class PautaController implements PautaControllerDoc {
 
     private final PautaService pautaService;
 

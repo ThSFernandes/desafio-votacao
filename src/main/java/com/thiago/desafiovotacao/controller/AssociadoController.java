@@ -1,5 +1,6 @@
 package com.thiago.desafiovotacao.controller;
 
+import com.thiago.desafiovotacao.controller.doc.AssociadoControllerDoc;
 import com.thiago.desafiovotacao.model.dtos.AssociadoDto;
 import com.thiago.desafiovotacao.service.AssociadoService;
 import jakarta.validation.Valid;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Slf4j
 @RequestMapping("/associado")
-public class AssociadoController {
+public class AssociadoController implements AssociadoControllerDoc {
 
     private final AssociadoService associadoService;
 

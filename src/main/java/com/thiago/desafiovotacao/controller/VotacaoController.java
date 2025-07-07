@@ -1,5 +1,6 @@
 package com.thiago.desafiovotacao.controller;
 
+import com.thiago.desafiovotacao.controller.doc.VotacaoControllerDoc;
 import com.thiago.desafiovotacao.model.dtos.CriarVotacaoDto;
 import com.thiago.desafiovotacao.model.dtos.VotacaoDto;
 import com.thiago.desafiovotacao.model.dtos.VotoDetalhadoDto;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/votacao")
-public class VotacaoController {
+public class VotacaoController implements VotacaoControllerDoc {
 
     private final VotacaoService votacaoService;
 
