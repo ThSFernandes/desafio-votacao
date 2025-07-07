@@ -1,117 +1,133 @@
-# Votação
+# 🗳️ API REST - Desafio Votação
 
-## Objetivo
 
-No cooperativismo, cada associado possui um voto e as decisões são tomadas em assembleias, por votação. Imagine que você deve criar uma solução para dispositivos móveis para gerenciar e participar dessas sessões de votação.
-Essa solução deve ser executada na nuvem e promover as seguintes funcionalidades através de uma API REST:
+## 📌 Objetivo
 
-- Cadastrar uma nova pauta
-- Abrir uma sessão de votação em uma pauta (a sessão de votação deve ficar aberta por
-  um tempo determinado na chamada de abertura ou 1 minuto por default)
-- Receber votos dos associados em pautas (os votos são apenas 'Sim'/'Não'. Cada associado
-  é identificado por um id único e pode votar apenas uma vez por pauta)
-- Contabilizar os votos e dar o resultado da votação na pauta
+Esta API RESTful simula o processo de votação em assembleias de cooperativas, onde cada associado possui direito a um voto. O projeto foi desenvolvido para demonstrar conhecimentos em arquitetura de microsserviços, segurança de dados, persistência com JPA, integração com serviços externos e boas práticas com Spring Boot.
 
-Para fins de exercício, a segurança das interfaces pode ser abstraída e qualquer chamada para as interfaces pode ser considerada como autorizada. A solução deve ser construída em java, usando Spring-boot, mas os frameworks e bibliotecas são de livre escolha (desde que não infrinja direitos de uso).
+---
 
-É importante que as pautas e os votos sejam persistidos e que não sejam perdidos com o restart da aplicação.
+## ✅ Funcionalidades
 
-O foco dessa avaliação é a comunicação entre o backend e o aplicativo mobile. Essa comunicação é feita através de mensagens no formato JSON, onde essas mensagens serão interpretadas pelo cliente para montar as telas onde o usuário vai interagir com o sistema. A aplicação cliente não faz parte da avaliação, apenas os componentes do servidor. O formato padrão dessas mensagens será detalhado no anexo 1.
+- 📄 Cadastrar nova pauta
+- 🔓 Abrir sessão de votação (com tempo determinado ou padrão de 1 minuto)
+- 🗳️ Receber votos (Sim/Não) de associados identificados por CPF
+- 📊 Contabilizar votos e retornar o resultado da votação
 
-## Como proceder
+---
 
-Por favor, **CLONE** o repositório e implemente sua solução, ao final, notifique a conclusão e envie o link do seu repositório clonado no GitHub, para que possamos analisar o código implementado.
+## 🧪 Funcionalidade Bônus
 
-Lembre de deixar todas as orientações necessárias para executar o seu código.
+### 🧩 Validador de CPF Externo (Mock)
 
-### Tarefas bônus
+- Endpoint simula uma integração externa:
+  - CPF pode ser **inválido** (`404`) ou
+  - Pode retornar `ABLE_TO_VOTE` ou `UNABLE_TO_VOTE` aleatoriamente.
 
-- Tarefa Bônus 1 - Integração com sistemas externos
-  - Criar uma Facade/Client Fake que retorna aleátoriamente se um CPF recebido é válido ou não.
-  - Caso o CPF seja inválido, a API retornará o HTTP Status 404 (Not found). Você pode usar geradores de CPF para gerar CPFs válidos
-  - Caso o CPF seja válido, a API retornará se o usuário pode (ABLE_TO_VOTE) ou não pode (UNABLE_TO_VOTE) executar a operação. Essa operação retorna resultados aleatórios, portanto um mesmo CPF pode funcionar em um teste e não funcionar no outro.
+---
 
-```
-// CPF Ok para votar
-{
-    "status": "ABLE_TO_VOTE
-}
-// CPF Nao Ok para votar - retornar 404 no client tb
-{
-    "status": "UNABLE_TO_VOTE
-}
-```
+## 🚀 Tecnologias Utilizadas
 
-Exemplos de retorno do serviço
+<p align="center">
+  <img src="https://img.shields.io/badge/Java_21-ED8B00?style=for-the-badge&logo=java&logoColor=white" />
+  <img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" />
+  <img src="https://img.shields.io/badge/Oracle_DB-F80000?style=for-the-badge&logo=oracle&logoColor=white" />
+  <img src="https://img.shields.io/badge/Flyway-CC0200?style=for-the-badge&logo=flyway&logoColor=white" />
+  <img src="https://img.shields.io/badge/MapStruct-FFB300?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Lombok-4B8BBE?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black" />
+  <img src="https://img.shields.io/badge/JUnit_5-25A162?style=for-the-badge&logo=junit5&logoColor=white" />
+  <img src="https://img.shields.io/badge/Jacoco-EC1C24?style=for-the-badge" />
+</p>
 
-### Tarefa Bônus 2 - Performance
+- **Java 21** — linguagem principal utilizada no projeto
+- **Spring Boot** — criação de API REST com Web, Data JPA, Validation
+- **Oracle Database** — banco de dados relacional utilizado com o driver `ojdbc11`
+- **Flyway** — controle de versionamento e migração de banco de dados
+- **MapStruct** — mapeamento automático entre DTOs e entidades
+- **Lombok** — geração automática de getters/setters e construtores
+- **Swagger (Springdoc OpenAPI)** — documentação da API
+- **JUnit 5 + Mockito** — testes automatizados
+- **Jacoco** — cobertura de testes
 
-- Imagine que sua aplicação possa ser usada em cenários que existam centenas de
-  milhares de votos. Ela deve se comportar de maneira performática nesses
-  cenários
-- Testes de performance são uma boa maneira de garantir e observar como sua
-  aplicação se comporta
+---
 
-### Tarefa Bônus 3 - Versionamento da API
+## ✅ Pré-requisitos
 
-○ Como você versionaria a API da sua aplicação? Que estratégia usar?
+Antes de executar o projeto, verifique se você possui instalado:
 
-## O que será analisado
+- [Java 21](https://www.oracle.com/java/technologies/javase/jdk21-archive-downloads.html)
+- [Gradle 8+](https://gradle.org/install/) (opcional, o projeto já possui `gradlew`)
+- [Docker e Docker Compose](https://docs.docker.com/compose/) (caso deseje executar com banco de dados em container)
 
-- Simplicidade no design da solução (evitar over engineering)
-- Organização do código
-- Arquitetura do projeto
-- Boas práticas de programação (manutenibilidade, legibilidade etc)
-- Possíveis bugs
-- Tratamento de erros e exceções
-- Explicação breve do porquê das escolhas tomadas durante o desenvolvimento da solução
-- Uso de testes automatizados e ferramentas de qualidade
-- Limpeza do código
-- Documentação do código e da API
-- Logs da aplicação
-- Mensagens e organização dos commits
+---
+## 🔗 Relacionamento entre Entidades
 
-## Dicas
+A estrutura do banco de dados segue uma modelagem relacional clara e consistente, conforme o diagrama abaixo:
 
-- Teste bem sua solução, evite bugs
-- Deixe o domínio das URLs de callback passiveis de alteração via configuração, para facilitar
-  o teste tanto no emulador, quanto em dispositivos fisicos.
-  Observações importantes
-- Não inicie o teste sem sanar todas as dúvidas
-- Iremos executar a aplicação para testá-la, cuide com qualquer dependência externa e
-  deixe claro caso haja instruções especiais para execução do mesmo
-  Classificação da informação: Uso Interno
+### 🧩 Entidades e Relacionamentos
 
-## Anexo 1
+- **ASSOCIADO**
+    - Cada associado é identificado por um `ID_ASSOCIADO`.
+    - Um associado pode registrar **múltiplos votos**.
 
-### Introdução
+- **PAUTA**
+    - Representa um tema a ser votado.
+    - Cada pauta pode conter **múltiplas sessões de votação**.
 
-A seguir serão detalhados os tipos de tela que o cliente mobile suporta, assim como os tipos de campos disponíveis para a interação do usuário.
+- **SESSAO_VOTACAO**
+    - Cada sessão pertence a **uma única pauta**.
+    - Uma sessão de votação pode ter **vários votos registrados**.
 
-### Tipo de tela – FORMULARIO
+- **VOTO**
+    - Cada voto está vinculado a um **associado** e a uma **sessão de votação**.
+    - Um associado pode votar **uma única vez por sessão**, conforme regra de negócio.
 
-A tela do tipo FORMULARIO exibe uma coleção de campos (itens) e possui um ou dois botões de ação na parte inferior.
+### 🔐 Regras de Integridade
 
-O aplicativo envia uma requisição POST para a url informada e com o body definido pelo objeto dentro de cada botão quando o mesmo é acionado. Nos casos onde temos campos de entrada
-de dados na tela, os valores informados pelo usuário são adicionados ao corpo da requisição. Abaixo o exemplo da requisição que o aplicativo vai fazer quando o botão “Ação 1” for acionado:
+- Ao tentar excluir um associado, pauta ou sessão, o banco impede a operação se houver votos relacionados (integridade referencial).
+- Todas as chaves estrangeiras são `NOT NULL`, garantindo vínculos obrigatórios entre as entidades.
 
-```
-POST http://seudominio.com/ACAO1
-{
-    “campo1”: “valor1”,
-    “campo2”: 123,
-    “idCampoTexto”: “Texto”,
-    “idCampoNumerico: 999
-    “idCampoData”: “01/01/2000”
-}
+---
+![Modelo Relacional](./1c28145f-d571-4c45-98ef-e8dada45a88d.png)
+___
+
+## ▶️ Como Executar o Projeto
+
+### 1. Clone o repositório
+
+```bash
+  git clone https://github.com/seu-usuario/desafio-votacao.git
 ```
 
-Obs: o formato da url acima é meramente ilustrativo e não define qualquer padrão de formato.
+1. **Limpeza e compilação do projeto**:
+   Execute o seguinte comando para limpar e compilar o projeto:
 
-### Tipo de tela – SELECAO
+```bash
+ ./gradlew clean build
+ ./gradlew bootRun
+ ```
 
-A tela do tipo SELECAO exibe uma lista de opções para que o usuário.
+### Opção 2: Usando Docker
 
-O aplicativo envia uma requisição POST para a url informada e com o body definido pelo objeto dentro de cada item da lista de seleção, quando o mesmo é acionado, semelhando ao funcionamento dos botões da tela FORMULARIO.
+2. **Subir os containers com Docker Compose**:
+   Execute o seguinte comando para construir e subir os containers:
 
-# desafio-votacao
+```bash
+  docker-compose up -d --build
+```
+## 📚 Documentação da API
+
+A documentação interativa da API está disponível via Swagger UI, fornecida pelo SpringDoc OpenAPI.
+
+### 🔗 Acesso
+
+Após iniciar a aplicação, acesse:
+
+[http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+
+> Você poderá visualizar todos os endpoints disponíveis, realizar requisições diretamente pela interface, verificar os contratos dos DTOs e acompanhar os códigos de resposta da API.
+
+
+
+
