@@ -1,10 +1,12 @@
 package com.thiago.desafiovotacao.service;
 
+import com.thiago.desafiovotacao.exception.BusinessException;
 import com.thiago.desafiovotacao.exception.RecursoNaoEncontradoException;
 import com.thiago.desafiovotacao.model.dtos.AssociadoDto;
 import com.thiago.desafiovotacao.model.entity.Associado;
 import com.thiago.desafiovotacao.model.mapper.AssociadoMapper;
 import com.thiago.desafiovotacao.repository.AssociadoRepository;
+import com.thiago.desafiovotacao.repository.VotoRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,8 +14,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 
 import static com.thiago.desafiovotacao.testdata.TestConstantes.*;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.*;
@@ -23,12 +24,14 @@ class AssociadoServiceTest {
     private AssociadoRepository repo;
     private AssociadoMapper mapper;
     private AssociadoService service;
+    private VotoRepository votoRepository;
 
     @BeforeEach
     void setUp() {
         repo = mock(AssociadoRepository.class);
         mapper = mock(AssociadoMapper.class);
-        service = new AssociadoService(repo, mapper);
+        votoRepository = mock(VotoRepository.class);
+        service = new AssociadoService(repo, mapper, votoRepository);
     }
 
     @Test
@@ -123,17 +126,24 @@ class AssociadoServiceTest {
     }
 
     @Test
-    @DisplayName("deve deletar associado com sucesso quando existir no banco")
-    void deveDeletarAssociadoComSucesso() {
+    @DisplayName("não deve deletar associado quando ele tiver votos")
+    void naoDeveDeletarAssociadoComVotos() {
         when(repo.existsById(eq(ID_ASSOCIADO)))
                 .thenReturn(true);
-        doNothing().when(repo).deleteById(eq(ID_ASSOCIADO));
+        when(votoRepository.existsByAssociadoId(eq(ID_ASSOCIADO)))
+                .thenReturn(true);
 
-        service.deletarAssociado(ID_ASSOCIADO);
+        BusinessException exception = assertThrows(BusinessException.class, () -> {
+            service.deletarAssociado(ID_ASSOCIADO);
+        });
 
-        verify(repo).existsById(eq(ID_ASSOCIADO));
-        verify(repo).deleteById(eq(ID_ASSOCIADO));
+        assertEquals("Não é possível remover o associado pois ele possui votos registrados.", exception.getMessage());
+
+        verify(repo).existsById(ID_ASSOCIADO);
+        verify(votoRepository).existsByAssociadoId(ID_ASSOCIADO);
+        verify(repo, never()).deleteById(anyLong());
     }
+
 
     @Test
     @DisplayName("deve lançar exceção quando deletar associado inexistente")

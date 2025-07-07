@@ -1,5 +1,6 @@
 package com.thiago.desafiovotacao.service;
 
+import com.thiago.desafiovotacao.exception.EntidadeEmUsoException;
 import com.thiago.desafiovotacao.exception.RecursoNaoEncontradoException;
 import com.thiago.desafiovotacao.model.dtos.PautaDto;
 import com.thiago.desafiovotacao.model.entity.Pauta;
@@ -8,6 +9,7 @@ import com.thiago.desafiovotacao.repository.PautaRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -170,16 +172,35 @@ class PautaServiceTest {
 
 
     @Test
-    @DisplayName("deve deletar pauta com sucesso quando existir no banco")
+    @DisplayName("deve deletar pauta com sucesso quando não houver vínculos")
     void deveDeletarPautaComSucesso() {
         when(repo.existsById(eq(ID_PAUTA))).thenReturn(true);
-        doNothing().when(repo).deleteById(eq(ID_PAUTA));
+        doNothing().when(repo).deleteById(eq(ID_PAUTA)); // sem exceção
 
         service.deletarPauta(ID_PAUTA);
 
         verify(repo).existsById(eq(ID_PAUTA));
         verify(repo).deleteById(eq(ID_PAUTA));
     }
+
+    @Test
+    @DisplayName("não deve deletar pauta quando houver entidades relacionadas")
+    void naoDeveDeletarPautaQuandoEstiverEmUso() {
+        when(repo.existsById(eq(ID_PAUTA))).thenReturn(true);
+        doThrow(new DataIntegrityViolationException("Integridade referencial"))
+                .when(repo).deleteById(eq(ID_PAUTA));
+
+        EntidadeEmUsoException exception = assertThrows(EntidadeEmUsoException.class, () -> {
+            service.deletarPauta(ID_PAUTA);
+        });
+
+        assertEquals("Não é possível excluir a pauta (id=" + ID_PAUTA + ") pois ela está em uso.", exception.getMessage());
+
+        verify(repo).existsById(eq(ID_PAUTA));
+        verify(repo).deleteById(eq(ID_PAUTA));
+    }
+
+
 
     @Test
     @DisplayName("deve lançar exceção quando deletar pauta inexistente")
