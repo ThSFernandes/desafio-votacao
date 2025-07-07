@@ -1,5 +1,6 @@
 package com.thiago.desafiovotacao.service;
 
+import com.thiago.desafiovotacao.exception.EntidadeEmUsoException;
 import com.thiago.desafiovotacao.exception.RecursoNaoEncontradoException;
 import com.thiago.desafiovotacao.model.dtos.PautaDto;
 import com.thiago.desafiovotacao.model.entity.Pauta;
@@ -7,6 +8,7 @@ import com.thiago.desafiovotacao.model.mapper.PautaMapper;
 import com.thiago.desafiovotacao.repository.PautaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -61,9 +63,13 @@ public class PautaService {
             log.warn("Tentativa de deletar pauta inexistente. ID={}", id);
             throw new RecursoNaoEncontradoException("Pauta não encontrada (id=" + id + ")");
         }
-
-        pautaRepository.deleteById(id);
-        log.info("Pauta deletada com sucesso. ID={}", id);
+        try {
+            pautaRepository.deleteById(id);
+            log.info("Pauta deletada com sucesso. ID={}", id);
+        } catch (DataIntegrityViolationException ex) {
+            log.error("Erro ao deletar pauta. ID={} ainda está em uso.", id);
+            throw new EntidadeEmUsoException("Não é possível excluir a pauta (id=" + id + ") pois ela está em uso.");
+        }
     }
 
     private Pauta buscarEntidadePorId(Long id) {

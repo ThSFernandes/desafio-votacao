@@ -1,10 +1,12 @@
 package com.thiago.desafiovotacao.service;
 
+import com.thiago.desafiovotacao.exception.BusinessException;
 import com.thiago.desafiovotacao.exception.RecursoNaoEncontradoException;
 import com.thiago.desafiovotacao.model.dtos.AssociadoDto;
 import com.thiago.desafiovotacao.model.entity.Associado;
 import com.thiago.desafiovotacao.model.mapper.AssociadoMapper;
 import com.thiago.desafiovotacao.repository.AssociadoRepository;
+import com.thiago.desafiovotacao.repository.VotoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ public class AssociadoService {
 
     private final AssociadoRepository associadoRepository;
     private final AssociadoMapper mapper;
+    private final VotoRepository votoRepository;
 
     public AssociadoDto criarAssociado(AssociadoDto dto) {
         log.info("Iniciando criação de associado.");
@@ -48,6 +51,11 @@ public class AssociadoService {
         if (!associadoRepository.existsById(id)) {
             log.warn("Tentativa de deletar associado inexistente. ID={}", id);
             throw new RecursoNaoEncontradoException("Associado não encontrado (id=" + id + ")");
+        }
+
+        if (votoRepository.existsByAssociadoId(id)) {
+            log.warn("Tentativa de remover um associado que votou id=" + id );
+            throw new BusinessException("Não é possível remover o associado pois ele possui votos registrados.");
         }
 
         associadoRepository.deleteById(id);

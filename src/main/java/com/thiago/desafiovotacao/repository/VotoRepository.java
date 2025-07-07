@@ -15,4 +15,5 @@ public interface VotoRepository extends JpaRepository<Voto, Long> {
 
     List<Voto> findByAssociado(Associado associado);
 
+    boolean existsByAssociadoId(Long idAssociado);
 }
