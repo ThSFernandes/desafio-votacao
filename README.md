@@ -3,7 +3,8 @@
 
 ## 📌 Objetivo
 
-Esta API RESTful simula o processo de votação em assembleias de cooperativas, onde cada associado possui direito a um voto. O projeto foi desenvolvido para demonstrar conhecimentos em arquitetura de microsserviços, segurança de dados, persistência com JPA, integração com serviços externos e boas práticas com Spring Boot.
+Esta API RESTful foi desenvolvida para simular assembleias cooperativistas, onde cada associado tem direito a um voto por pauta. A aplicação permite o cadastro de pautas, abertura de sessões com tempo controlado, registro de votos únicos por associado e apuração dos resultados. O projeto também contempla boas práticas de arquitetura, persistência de dados e integração com serviços externos simulados.
+
 
 ---
 
