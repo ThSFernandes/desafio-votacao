@@ -9,5 +9,5 @@ import org.mapstruct.Mapping;
 public interface CpfMapper {
 
     @Mapping(target = "statusValidacao", expression = "java(validaVoto)")
-    ValidadorCpfDto validaVotoParaDto(ValidaVoto validaVoto);
+    ValidadorCpfDto toEntity(ValidaVoto validaVoto);
 }

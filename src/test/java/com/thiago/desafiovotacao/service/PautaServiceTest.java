@@ -40,30 +40,30 @@ class PautaServiceTest {
                 .parse(DATA_CRIACAO_PADRAO)
                 .atStartOfDay());
 
-        when(mapper.pautaDtoParaPauta(isA(PautaDto.class))).thenReturn(entidade);
+        when(mapper.toEntity(isA(PautaDto.class))).thenReturn(entidade);
         when(repo.save(entidade)).thenReturn(entidade);
 
         PautaDto esperado = new PautaDto();
-        when(mapper.pautaParaPautaDto(entidade)).thenReturn(esperado);
+        when(mapper.toDto(entidade)).thenReturn(esperado);
 
         PautaDto resultado = service.criarPauta(new PautaDto());
 
         assertSame(esperado, resultado);
-        verify(mapper).pautaDtoParaPauta(any(PautaDto.class));
+        verify(mapper).toEntity(any(PautaDto.class));
         verify(repo).save(entidade);
-        verify(mapper).pautaParaPautaDto(entidade);
+        verify(mapper).toDto(entidade);
     }
 
     @Test
     @DisplayName("deve lançar exceção quando mapper falhar ao criar pauta")
     void deveLancarExceptionQuandoMapperFalhaEmCriacao() {
-        when(mapper.pautaDtoParaPauta(any(PautaDto.class)))
+        when(mapper.toEntity(any(PautaDto.class)))
                 .thenThrow(new RecursoNaoEncontradoException(MSG_ERRO_MAPEAR));
 
         assertThrows(RecursoNaoEncontradoException.class,
                 () -> service.criarPauta(new PautaDto()));
 
-        verify(mapper).pautaDtoParaPauta(any(PautaDto.class));
+        verify(mapper).toEntity(any(PautaDto.class));
         verifyNoInteractions(repo);
     }
 
@@ -71,14 +71,14 @@ class PautaServiceTest {
     @DisplayName("deve lançar exceção quando salvar pauta falhar")
     void deveLancarExceptionQuandoSaveFalhaEmCriacao() {
         Pauta entidade = new Pauta();
-        when(mapper.pautaDtoParaPauta(any(PautaDto.class))).thenReturn(entidade);
+        when(mapper.toEntity(any(PautaDto.class))).thenReturn(entidade);
         when(repo.save(entidade))
                 .thenThrow(new RecursoNaoEncontradoException(MSG_ERRO_SAVE));
 
         assertThrows(RecursoNaoEncontradoException.class,
                 () -> service.criarPauta(new PautaDto()));
 
-        verify(mapper).pautaDtoParaPauta(any(PautaDto.class));
+        verify(mapper).toEntity(any(PautaDto.class));
         verify(repo).save(entidade);
     }
 
@@ -90,13 +90,13 @@ class PautaServiceTest {
         when(repo.findById(eq(ID_PAUTA))).thenReturn(Optional.of(entidade));
 
         PautaDto esperado = new PautaDto();
-        when(mapper.pautaParaPautaDto(entidade)).thenReturn(esperado);
+        when(mapper.toDto(entidade)).thenReturn(esperado);
 
         PautaDto resultado = service.buscarPautaPeloId(ID_PAUTA);
 
         assertSame(esperado, resultado);
         verify(repo).findById(eq(ID_PAUTA));
-        verify(mapper).pautaParaPautaDto(entidade);
+        verify(mapper).toDto(entidade);
     }
 
     @Test
@@ -126,13 +126,13 @@ class PautaServiceTest {
         when(repo.save(existente)).thenReturn(salvo);
 
         PautaDto esperado = new PautaDto();
-        when(mapper.pautaParaPautaDto(salvo)).thenReturn(esperado);
+        when(mapper.toDto(salvo)).thenReturn(esperado);
 
         PautaDto resultado = service.atualizarPauta(ID_PAUTA, new PautaDto());
         assertSame(esperado, resultado);
         verify(repo).findById(eq(ID_PAUTA));
         verify(repo).save(existente);
-        verify(mapper).pautaParaPautaDto(salvo);
+        verify(mapper).toDto(salvo);
     }
 
 

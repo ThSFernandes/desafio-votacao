@@ -8,9 +8,9 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface PautaMapper {
 
-    PautaDto pautaParaPautaDto(Pauta entidade);
+    PautaDto toDto(Pauta entidade);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "dataCriacao", ignore = true)
-    Pauta pautaDtoParaPauta(PautaDto dto);
+    Pauta toEntity(PautaDto dto);
 }

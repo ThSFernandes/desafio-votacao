@@ -8,8 +8,8 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface AssociadoMapper {
 
-    AssociadoDto associadoParaAssociadoDto (Associado dto);
+    AssociadoDto toDto(Associado entidade);
 
     @Mapping(target = "id", ignore = true)
-    Associado associadoDtoParaAssociado(AssociadoDto entidade);
+    Associado toEntity(AssociadoDto dto);
 }

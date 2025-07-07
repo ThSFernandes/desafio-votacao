@@ -38,7 +38,7 @@ class AssociadoServiceTest {
         entidade.setId(ID_ASSOCIADO_2);
         entidade.setNome(NOME_ASSOCIADO_2);
 
-        when(mapper.associadoDtoParaAssociado(isA(AssociadoDto.class)))
+        when(mapper.toEntity(isA(AssociadoDto.class)))
                 .thenReturn(entidade);
         when(repo.save(entidade))
                 .thenReturn(entidade);
@@ -46,27 +46,27 @@ class AssociadoServiceTest {
         AssociadoDto esperado = new AssociadoDto();
         esperado.setId(ID_ASSOCIADO_2);
         esperado.setNome(NOME_ASSOCIADO_2);
-        when(mapper.associadoParaAssociadoDto(entidade))
+        when(mapper.toDto(entidade))
                 .thenReturn(esperado);
 
         AssociadoDto resultado = service.criarAssociado(new AssociadoDto());
 
         assertSame(esperado, resultado);
-        verify(mapper).associadoDtoParaAssociado(isA(AssociadoDto.class));
+        verify(mapper).toEntity(isA(AssociadoDto.class));
         verify(repo).save(entidade);
-        verify(mapper).associadoParaAssociadoDto(entidade);
+        verify(mapper).toDto(entidade);
     }
 
     @Test
     @DisplayName("deve lançar exceção quando mapper falhar ao criar associado")
     void deveLancarExceptionQuandoMapperFalha() {
-        when(mapper.associadoDtoParaAssociado(isA(AssociadoDto.class)))
+        when(mapper.toEntity(isA(AssociadoDto.class)))
                 .thenThrow(new RecursoNaoEncontradoException(MSG_ERRO_MAPEAR));
 
         assertThrows(RecursoNaoEncontradoException.class,
                 () -> service.criarAssociado(new AssociadoDto()));
 
-        verify(mapper).associadoDtoParaAssociado(isA(AssociadoDto.class));
+        verify(mapper).toEntity(isA(AssociadoDto.class));
         verifyNoInteractions(repo);
     }
 
@@ -74,7 +74,7 @@ class AssociadoServiceTest {
     @DisplayName("deve lançar exceção quando salvar associado falhar")
     void deveLancarExceptionQuandoSaveFalha() {
         Associado entidade = new Associado();
-        when(mapper.associadoDtoParaAssociado(isA(AssociadoDto.class)))
+        when(mapper.toEntity(isA(AssociadoDto.class)))
                 .thenReturn(entidade);
         when(repo.save(entidade))
                 .thenThrow(new RecursoNaoEncontradoException(MSG_ERRO_SAVE));
@@ -82,7 +82,7 @@ class AssociadoServiceTest {
         assertThrows(RecursoNaoEncontradoException.class,
                 () -> service.criarAssociado(new AssociadoDto()));
 
-        verify(mapper).associadoDtoParaAssociado(isA(AssociadoDto.class));
+        verify(mapper).toEntity(isA(AssociadoDto.class));
         verify(repo).save(entidade);
     }
 
@@ -99,14 +99,14 @@ class AssociadoServiceTest {
         AssociadoDto esperado = new AssociadoDto();
         esperado.setId(ID_ASSOCIADO);
         esperado.setNome(NOME_ASSOCIADO);
-        when(mapper.associadoParaAssociadoDto(entidade))
+        when(mapper.toDto(entidade))
                 .thenReturn(esperado);
 
         AssociadoDto resultado = service.buscarAssociado(ID_ASSOCIADO);
 
         assertSame(esperado, resultado);
         verify(repo).findById(eq(ID_ASSOCIADO));
-        verify(mapper).associadoParaAssociadoDto(entidade);
+        verify(mapper).toDto(entidade);
     }
 
     @Test

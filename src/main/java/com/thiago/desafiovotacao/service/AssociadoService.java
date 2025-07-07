@@ -20,14 +20,14 @@ public class AssociadoService {
 
     public AssociadoDto criarAssociado(AssociadoDto dto) {
         log.info("DTO do associado recebido: {}", dto);
-        Associado entidade = mapper.associadoDtoParaAssociado(dto);
+        Associado entidade = mapper.toEntity(dto);
         entidade = associadoRepository.save(entidade);
-        return mapper.associadoParaAssociadoDto(entidade);
+        return mapper.toDto(entidade);
     }
 
     public AssociadoDto buscarAssociado(Long id) {
         return associadoRepository.findById(id)
-                .map(mapper::associadoParaAssociadoDto)
+                .map(mapper::toDto)
                 .orElseThrow(() ->
                         new RecursoNaoEncontradoException("Associado não encontrado (id=" + id + ")"));
     }

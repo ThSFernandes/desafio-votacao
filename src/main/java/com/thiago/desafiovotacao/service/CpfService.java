@@ -22,7 +22,7 @@ public class CpfService {
         if (resultado.equals(ValidaVoto.UNABLE_TO_VOTE)) {
             throw new CpfUnableToVoteException(cpf);
         }
-        return mapper.validaVotoParaDto(resultado);
+        return mapper.toEntity(resultado);
     }
 
 }

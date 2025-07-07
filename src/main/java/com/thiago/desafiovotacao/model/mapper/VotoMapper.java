@@ -14,19 +14,19 @@ public interface VotoMapper {
 
     @Mapping(target = "idAssociado", source = "associado.id")
     @Mapping(target = "idSessaoVotacao", source = "sessaoVotacao.id")
-    VotacaoDto votoParaVotacaoDto(Voto entidade);
+    VotacaoDto toDto(Voto entidade);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "dataCriacao", ignore = true)
     @Mapping(target = "associado", ignore = true)
     @Mapping(target = "sessaoVotacao", ignore = true)
-    Voto votacaoDtoParaVoto(CriarVotacaoDto dto);
+    Voto toEntity(CriarVotacaoDto dto);
 
     @Mapping(target = "tipoVoto", source = "tipoVoto")
     @Mapping(target = "nomePauta", source = "sessaoVotacao.pauta.titulo")
     @Mapping(target = "dataVoto", source = "dataCriacao")
-    ItemVotoDto votoParaItemVotoDto(Voto voto);
+    ItemVotoDto toItemDto(Voto voto);
 
-    List<ItemVotoDto> votosParaItemVotoDtos(List<Voto> votos);
+    List<ItemVotoDto> toItemDtoList(List<Voto> votos);
 }
 

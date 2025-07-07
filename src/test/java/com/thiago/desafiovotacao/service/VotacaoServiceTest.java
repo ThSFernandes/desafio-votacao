@@ -104,18 +104,18 @@ class VotacaoServiceTest {
 
         CriarVotacaoDto dtoIn = new CriarVotacaoDto(VOTO_SIM);
         Voto votoEntity = new Voto();
-        when(votoMapper.votacaoDtoParaVoto(dtoIn)).thenReturn(votoEntity);
+        when(votoMapper.toEntity(dtoIn)).thenReturn(votoEntity);
         when(votoRepo.save(votoEntity)).thenReturn(votoEntity);
 
         VotacaoDto esperado = new VotacaoDto();
-        when(votoMapper.votoParaVotacaoDto(votoEntity)).thenReturn(esperado);
+        when(votoMapper.toDto(votoEntity)).thenReturn(esperado);
 
         VotacaoDto resultado = service.criarVoto(ID_SESSAO_EXISTENTE, ID_ASSOCIADO_EXISTENTE, dtoIn);
 
         assertSame(esperado, resultado);
-        verify(votoMapper).votacaoDtoParaVoto(dtoIn);
+        verify(votoMapper).toEntity(dtoIn);
         verify(votoRepo).save(votoEntity);
-        verify(votoMapper).votoParaVotacaoDto(votoEntity);
+        verify(votoMapper).toDto(votoEntity);
         verifyNoInteractions(sessaoService);
     }
 
@@ -138,12 +138,12 @@ class VotacaoServiceTest {
         when(votoRepo.findById(ID_VOTO_EXISTENTE)).thenReturn(Optional.of(voto));
 
         VotacaoDto dto = new VotacaoDto();
-        when(votoMapper.votoParaVotacaoDto(voto)).thenReturn(dto);
+        when(votoMapper.toDto(voto)).thenReturn(dto);
 
         VotacaoDto resultado = service.buscarVotoPorId(ID_VOTO_EXISTENTE);
 
         assertSame(dto, resultado);
-        verify(votoMapper).votoParaVotacaoDto(voto);
+        verify(votoMapper).toDto(voto);
     }
 
     @Test
@@ -187,18 +187,18 @@ class VotacaoServiceTest {
 
         CriarVotacaoDto dtoIn = new CriarVotacaoDto(VOTO_NAO);
         Voto votoEntity = new Voto();
-        when(votoMapper.votacaoDtoParaVoto(dtoIn)).thenReturn(votoEntity);
+        when(votoMapper.toEntity(dtoIn)).thenReturn(votoEntity);
         when(votoRepo.save(votoEntity)).thenReturn(votoEntity);
 
         VotacaoDto esperado = new VotacaoDto();
-        when(votoMapper.votoParaVotacaoDto(votoEntity)).thenReturn(esperado);
+        when(votoMapper.toDto(votoEntity)).thenReturn(esperado);
 
         VotacaoDto resultado = service.criarVoto(ID_SESSAO_EXISTENTE, ID_ASSOCIADO_EXISTENTE, dtoIn);
 
         assertSame(esperado, resultado);
-        verify(votoMapper).votacaoDtoParaVoto(dtoIn);
+        verify(votoMapper).toEntity(dtoIn);
         verify(votoRepo).save(votoEntity);
-        verify(votoMapper).votoParaVotacaoDto(votoEntity);
+        verify(votoMapper).toDto(votoEntity);
     }
 
 }

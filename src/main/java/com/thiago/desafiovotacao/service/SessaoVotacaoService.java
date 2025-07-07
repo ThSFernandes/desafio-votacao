@@ -45,19 +45,19 @@ public class SessaoVotacaoService {
         LocalDateTime inicio = LocalDateTime.now();
         LocalDateTime termino = inicio.plusMinutes(duracao);
 
-        SessaoVotacao sessao = mapper.sessaodtoParaSessaoVotacao(dto);
+        SessaoVotacao sessao = mapper.toEntity(dto);
         sessao.setDataDeCriacao(inicio);
         sessao.setDataDeTermino(termino);
         sessao.setPauta(pauta);
 
-        return mapper.sessaoVotacaoParaSessaoDto(sessaoRepository.save(sessao));
+        return mapper.toDto(sessaoRepository.save(sessao));
     }
 
     public SessaoVotacaoDto buscarSessaoPorIdDetalhado(Long idSessao) {
         SessaoVotacao entidade = buscarSessao(idSessao);
 
         validarStatusDaSessao(entidade);
-        return mapper.sessaoVotacaoParaSessaoDto(entidade);
+        return mapper.toDto(entidade);
     }
 
     public ResultadoSessaoDto buscarSessaoPorIdParaResultado(Long idSessao) {
@@ -69,7 +69,7 @@ public class SessaoVotacaoService {
         long votosNao = buscarQuantidadePorTipo(sessao, TipoVoto.NAO);
         long totalVotos = votosSim + votosNao;
 
-        return mapper.toResultadoSessaoDto(sessao, votosSim, votosNao, totalVotos, sessao.getStatusVotacao());
+        return mapper.toResultadoDto(sessao, votosSim, votosNao, totalVotos, sessao.getStatusVotacao());
     }
 
     public void validarStatusDaSessao(SessaoVotacao sessaoVotacao) {

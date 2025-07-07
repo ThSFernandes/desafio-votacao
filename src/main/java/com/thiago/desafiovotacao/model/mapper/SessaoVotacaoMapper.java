@@ -12,7 +12,7 @@ import org.mapstruct.Mapping;
 public interface SessaoVotacaoMapper {
 
     @Mapping(target = "idPauta", source = "pauta.id")
-    SessaoVotacaoDto sessaoVotacaoParaSessaoDto(SessaoVotacao entidade);
+    SessaoVotacaoDto toDto(SessaoVotacao entidade);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "pauta", ignore = true)
@@ -20,16 +20,16 @@ public interface SessaoVotacaoMapper {
     @Mapping(target = "dataDeCriacao", ignore = true)
     @Mapping(target = "dataDeTermino", ignore = true)
     @Mapping(target = "votos", ignore = true)
-    SessaoVotacao sessaodtoParaSessaoVotacao(CriacaoSessaoVotacaoDto dto);
+    SessaoVotacao toEntity(CriacaoSessaoVotacaoDto dto);
 
 
-    @Mapping(target = "id",              source = "sessao.id")
-    @Mapping(target = "dataDeCriacao",   source = "sessao.dataDeCriacao")
-    @Mapping(target = "dataDeTermino",   source = "sessao.dataDeTermino")
-    @Mapping(target = "totalSim",        expression = "java(totalSim)")
-    @Mapping(target = "totalNao",        expression = "java(totalNao)")
-    @Mapping(target = "resultado",       expression = "java(resultado)")
-    ResultadoSessaoDto toResultadoSessaoDto(
+    @Mapping(target = "id", source = "sessao.id")
+    @Mapping(target = "dataDeCriacao", source = "sessao.dataDeCriacao")
+    @Mapping(target = "dataDeTermino", source = "sessao.dataDeTermino")
+    @Mapping(target = "totalSim", expression = "java(totalSim)")
+    @Mapping(target = "totalNao", expression = "java(totalNao)")
+    @Mapping(target = "resultado", expression = "java(resultado)")
+    ResultadoSessaoDto toResultadoDto(
             SessaoVotacao sessao,
             long totalSim,
             long totalNao,

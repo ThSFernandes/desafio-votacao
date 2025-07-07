@@ -55,14 +55,14 @@ class CpfServiceTest {
     @DisplayName("deve lançar CpfUnableToVoteException quando mapper lança exceção")
     void deveLancarQuandoMapperLancaErro() {
         when(client.validarVoto(CPF_VALIDO)).thenReturn(ValidaVoto.ABLE_TO_VOTE);
-        when(mapper.validaVotoParaDto(ValidaVoto.ABLE_TO_VOTE))
+        when(mapper.toEntity(ValidaVoto.ABLE_TO_VOTE))
                 .thenThrow(new CpfUnableToVoteException(MSG_ERRO_MAPEAR));
 
         assertThrows(CpfUnableToVoteException.class,
                 () -> service.verificaPermissaoDeVoto(CPF_VALIDO));
 
         verify(client).validarVoto(CPF_VALIDO);
-        verify(mapper).validaVotoParaDto(ValidaVoto.ABLE_TO_VOTE);
+        verify(mapper).toEntity(ValidaVoto.ABLE_TO_VOTE);
     }
 
     @Test
@@ -70,14 +70,14 @@ class CpfServiceTest {
     void deveRetornarDtoQuandoTudoValido() {
         when(client.validarVoto(CPF_VALIDO)).thenReturn(ValidaVoto.ABLE_TO_VOTE);
         ValidadorCpfDto dto = new ValidadorCpfDto(ValidaVoto.ABLE_TO_VOTE);
-        when(mapper.validaVotoParaDto(ValidaVoto.ABLE_TO_VOTE)).thenReturn(dto);
+        when(mapper.toEntity(ValidaVoto.ABLE_TO_VOTE)).thenReturn(dto);
 
         ValidadorCpfDto resultado = service.verificaPermissaoDeVoto(CPF_VALIDO);
 
         assertSame(dto, resultado);
         assertEquals(ValidaVoto.ABLE_TO_VOTE, resultado.getStatusValidacao());
         verify(client).validarVoto(CPF_VALIDO);
-        verify(mapper).validaVotoParaDto(ValidaVoto.ABLE_TO_VOTE);
+        verify(mapper).toEntity(ValidaVoto.ABLE_TO_VOTE);
     }
 
     @Test

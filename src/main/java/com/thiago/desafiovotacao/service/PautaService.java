@@ -18,14 +18,14 @@ public class PautaService {
     private final PautaMapper mapper;
 
     public PautaDto criarPauta(PautaDto pautaDto) {
-        Pauta pauta = mapper.pautaDtoParaPauta(pautaDto);
+        Pauta pauta = mapper.toEntity(pautaDto);
         pautaRepository.save(pauta);
         log.info("Pauta criada (id={})", pauta.getId());
-        return mapper.pautaParaPautaDto(pauta);
+        return mapper.toDto(pauta);
     }
 
     public PautaDto buscarPautaPeloId(Long id) {
-        return pautaRepository.findById(id).map(mapper::pautaParaPautaDto)
+        return pautaRepository.findById(id).map(mapper::toDto)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Pauta não encontrada (id=" + id + ")"));
     }
 
@@ -35,7 +35,7 @@ public class PautaService {
         pautaRecuperada.setDescricao(pautaDto.getDescricao());
         log.info("Pauta atualizada (id={})", id);
 
-        return mapper.pautaParaPautaDto(pautaRepository.save(pautaRecuperada));
+        return mapper.toDto(pautaRepository.save(pautaRecuperada));
     }
 
     public void deletarPauta(Long id) {

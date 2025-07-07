@@ -45,28 +45,28 @@ public class VotacaoService {
             throw new SessaoException("Associado já registrou voto nesta sessão.");
         }
 
-        Voto voto = mapper.votacaoDtoParaVoto(dto);
+        Voto voto = mapper.toEntity(dto);
         voto.setAssociado(associado);
         voto.setSessaoVotacao(sessao);
         voto = votoRepository.save(voto);
         log.info("Voto salvo (id={}, sessao={}, associado={})",
                 voto.getId(), idSessao, idAssociado);
 
-        return mapper.votoParaVotacaoDto(voto);
+        return mapper.toDto(voto);
     }
 
     public VotacaoDto buscarVotoPorId(Long votoId) {
         Voto voto = votoRepository.findById(votoId)
                 .orElseThrow(() -> new RecursoNaoEncontradoException(
                         "Voto não encontrado (id=" + votoId + ")"));
-        return mapper.votoParaVotacaoDto(voto);
+        return mapper.toDto(voto);
     }
 
     public VotoDetalhadoDto listarVotosDoAssociado(Long idAssociado) {
 
         Associado associado = buscarAssociado(idAssociado);
         List<Voto> votos = votoRepository.findByAssociado(associado);
-        List<ItemVotoDto> itens = mapper.votosParaItemVotoDtos(votos);
+        List<ItemVotoDto> itens = mapper.toItemDtoList(votos);
 
         VotoDetalhadoDto dto =
                 new VotoDetalhadoDto(associado.getId(), associado.getNome(), itens);

@@ -56,11 +56,11 @@ class SessaoVotacaoServiceTest {
         entidade.setPauta(pauta);
         entidade.setDataDeCriacao(LocalDate.now().atStartOfDay());
         entidade.setDataDeTermino(LocalDate.now().plusDays(1).atStartOfDay());
-        when(mapper.sessaodtoParaSessaoVotacao(any())).thenReturn(entidade);
+        when(mapper.toEntity(any())).thenReturn(entidade);
         when(sessaoRepo.save(entidade)).thenReturn(entidade);
 
         SessaoVotacaoDto dto = new SessaoVotacaoDto();
-        when(mapper.sessaoVotacaoParaSessaoDto(entidade)).thenReturn(dto);
+        when(mapper.toDto(entidade)).thenReturn(dto);
 
         SessaoVotacaoDto result = service.criarSessaoVotacao(ID_PAUTA, new CriacaoSessaoVotacaoDto());
         assertSame(dto, result);
@@ -82,7 +82,7 @@ class SessaoVotacaoServiceTest {
         when(pautaRepo.findById(ID_PAUTA)).thenReturn(Optional.of(pauta));
 
         SessaoVotacao entidade = new SessaoVotacao();
-        when(mapper.sessaodtoParaSessaoVotacao(any())).thenReturn(entidade);
+        when(mapper.toEntity(any())).thenReturn(entidade);
         when(sessaoRepo.save(entidade))
                 .thenThrow(new RecursoNaoEncontradoException(MSG_ERRO_SAVE_SESSAO));
 
@@ -99,7 +99,7 @@ class SessaoVotacaoServiceTest {
         when(votoRepo.countBySessaoVotacaoAndTipoVoto(any(), any())).thenReturn(0L);
 
         SessaoVotacaoDto dto = new SessaoVotacaoDto();
-        when(mapper.sessaoVotacaoParaSessaoDto(sessao)).thenReturn(dto);
+        when(mapper.toDto(sessao)).thenReturn(dto);
 
         SessaoVotacaoDto result = service.buscarSessaoPorIdDetalhado(ID_SESSAO_VOTACAO);
         assertSame(dto, result);
@@ -126,7 +126,7 @@ class SessaoVotacaoServiceTest {
         when(sessaoRepo.save(any())).thenReturn(sessao);
 
         ResultadoSessaoDto dto = new ResultadoSessaoDto();
-        when(mapper.toResultadoSessaoDto(any(), eq(2L), eq(3L), eq(5L), any()))
+        when(mapper.toResultadoDto(any(), eq(2L), eq(3L), eq(5L), any()))
                 .thenReturn(dto);
 
         ResultadoSessaoDto result = service.buscarSessaoPorIdParaResultado(ID_SESSAO_VOTACAO);
