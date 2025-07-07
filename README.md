@@ -89,8 +89,9 @@ A estrutura do banco de dados segue uma modelagem relacional clara e consistente
 - Todas as chaves estrangeiras são `NOT NULL`, garantindo vínculos obrigatórios entre as entidades.
 
 ---
-![Modelo Relacional](./1c28145f-d571-4c45-98ef-e8dada45a88d.png)
-___
+<img width="1181" height="454" alt="Image" src="https://github.com/user-attachments/assets/aece60f1-9f8c-4c85-8dd4-52328ead38b0" />
+
+---
 
 ## ▶️ Como Executar o Projeto
 
