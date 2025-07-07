@@ -88,14 +88,17 @@ public class VotacaoService {
     }
 
     private void verificarStatusDaSessao(SessaoVotacao sessao) {
-        boolean expirou = LocalDateTime.now().isAfter(sessao.getDataDeTermino());
+
         boolean statusAberto = sessao.getStatusVotacao() == StatusVotacao.EM_ANDAMENTO;
 
-        if (expirou && statusAberto) {
-            sessaoVotacaoService.apurarResultado(sessao);
+        if (!statusAberto) {
             throw new SessaoException("Sessão encerrada; consulte o resultado.");
         }
-        if (!statusAberto) {
+
+        LocalDateTime termino =  sessao.getDataDeTermino();
+
+        if (termino != null && LocalDateTime.now().isAfter(termino)) {
+            sessaoVotacaoService.apurarResultado(sessao);
             throw new SessaoException("Sessão encerrada; consulte o resultado.");
         }
     }
