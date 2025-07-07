@@ -15,7 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Schema(
         name = "Associado",
-        description = "DTO de Associação com exemplos de uso")
+        description = "DTO de criação de Associado")
 public class AssociadoDto {
 
     @Schema(

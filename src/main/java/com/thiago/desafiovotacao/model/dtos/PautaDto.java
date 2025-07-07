@@ -46,5 +46,10 @@ public class PautaDto {
     )
     private String descricao;
 
+    @Schema(
+            description = "Data e hora da criação da pauta",
+            example = "2025-07-07T14:30:00",
+            accessMode = Schema.AccessMode.READ_ONLY
+    )
     private LocalDateTime dataCriacao;
 }

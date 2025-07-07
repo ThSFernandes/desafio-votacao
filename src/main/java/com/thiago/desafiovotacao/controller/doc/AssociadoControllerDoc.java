@@ -11,7 +11,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Associados", description = "Operações de CRUD para associados")
+@Tag(name = "Associados", description = "Operações para informações dos associados")
 @RequestMapping("/associado")
 public interface AssociadoControllerDoc {
 
@@ -40,7 +40,7 @@ public interface AssociadoControllerDoc {
 
     @Operation(
             summary = "Cria um novo associado",
-            description = "Registra um associado com nome e CPF únicos.",
+            description = "Registra um associado com nome .",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     required = true,
                     content = @Content(schema = @Schema(implementation = AssociadoDto.class))

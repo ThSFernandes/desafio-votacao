@@ -59,7 +59,7 @@ public class ResultadoSessaoDto {
 
     @Schema(
             description = "Resultado final da votação",
-            example = "REPROVADO",
+            example = "APROVADO",
             implementation = StatusVotacao.class
     )
     private StatusVotacao resultado;
