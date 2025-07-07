@@ -1,5 +1,7 @@
 package com.thiago.desafiovotacao.service;
 
+import com.thiago.desafiovotacao.exception.RecursoNaoEncontradoException;
+import com.thiago.desafiovotacao.exception.SessaoException;
 import com.thiago.desafiovotacao.model.dtos.CriarVotacaoDto;
 import com.thiago.desafiovotacao.model.dtos.ItemVotoDto;
 import com.thiago.desafiovotacao.model.dtos.VotacaoDto;
@@ -12,7 +14,6 @@ import com.thiago.desafiovotacao.model.mapper.VotoMapper;
 import com.thiago.desafiovotacao.repository.AssociadoRepository;
 import com.thiago.desafiovotacao.repository.SessaoVotacaoRepository;
 import com.thiago.desafiovotacao.repository.VotoRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +42,7 @@ public class VotacaoService {
         Associado associado = buscarAssociado(idAssociado);
 
         if (votoRepository.existsByAssociadoAndSessaoVotacao(associado, sessao)) {
-            throw new IllegalStateException("Associado já registrou voto nesta sessão.");
+            throw new SessaoException("Associado já registrou voto nesta sessão.");
         }
 
         Voto voto = mapper.votacaoDtoParaVoto(dto);
@@ -56,7 +57,7 @@ public class VotacaoService {
 
     public VotacaoDto buscarVotoPorId(Long votoId) {
         Voto voto = votoRepository.findById(votoId)
-                .orElseThrow(() -> new EntityNotFoundException(
+                .orElseThrow(() -> new RecursoNaoEncontradoException(
                         "Voto não encontrado (id=" + votoId + ")"));
         return mapper.votoParaVotacaoDto(voto);
     }
@@ -77,13 +78,13 @@ public class VotacaoService {
     private SessaoVotacao buscarSessao(Long id) {
         return sessaoRepository.findById(id)
                 .orElseThrow(() ->
-                        new EntityNotFoundException("Sessão não encontrada (id=" + id + ")"));
+                        new RecursoNaoEncontradoException("Sessão não encontrada (id=" + id + ")"));
     }
 
     private Associado buscarAssociado(Long id) {
         return associadoRepository.findById(id)
                 .orElseThrow(() ->
-                        new EntityNotFoundException("Associado não encontrado (id=" + id + ")"));
+                        new RecursoNaoEncontradoException("Associado não encontrado (id=" + id + ")"));
     }
 
     private void verificarStatusDaSessao(SessaoVotacao sessao) {
@@ -91,11 +92,11 @@ public class VotacaoService {
         boolean statusAberto = sessao.getStatusVotacao() == StatusVotacao.EM_ANDAMENTO;
 
         if (expirou && statusAberto) {
-            sessaoVotacaoService.apurarResultado(sessao);  // reaproveita regra já existente
-            throw new IllegalStateException("Sessão encerrada; consulte o resultado.");
+            sessaoVotacaoService.apurarResultado(sessao);
+            throw new SessaoException("Sessão encerrada; consulte o resultado.");
         }
         if (!statusAberto) {
-            throw new IllegalStateException("Sessão encerrada; consulte o resultado.");
+            throw new SessaoException("Sessão encerrada; consulte o resultado.");
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.thiago.desafiovotacao.service;
 
+import com.thiago.desafiovotacao.exception.RecursoNaoEncontradoException;
 import com.thiago.desafiovotacao.model.dtos.CriacaoSessaoVotacaoDto;
 import com.thiago.desafiovotacao.model.dtos.ResultadoSessaoDto;
 import com.thiago.desafiovotacao.model.dtos.SessaoVotacaoDto;
@@ -11,7 +12,6 @@ import com.thiago.desafiovotacao.model.mapper.SessaoVotacaoMapper;
 import com.thiago.desafiovotacao.repository.PautaRepository;
 import com.thiago.desafiovotacao.repository.SessaoVotacaoRepository;
 import com.thiago.desafiovotacao.repository.VotoRepository;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,7 @@ public class SessaoVotacaoService {
     public SessaoVotacaoDto criarSessaoVotacao(Long idPauta, CriacaoSessaoVotacaoDto dto) {
 
         Pauta pauta = pautaRepository.findById(idPauta)
-                .orElseThrow(() -> new EntityNotFoundException("Pauta não encontrada (id=" + idPauta + ")"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Pauta não encontrada (id=" + idPauta + ")"));
 
         int duracao = DURACAO_EM_MINUTOS;
         Integer minutos = dto.getDuracaoMinutos();
@@ -60,13 +60,13 @@ public class SessaoVotacaoService {
         return mapper.sessaoVotacaoParaSessaoDto(entidade);
     }
 
-    public ResultadoSessaoDto buscarSessaoPorIdParaResultado (Long idSessao){
+    public ResultadoSessaoDto buscarSessaoPorIdParaResultado(Long idSessao) {
         SessaoVotacao sessao = buscarSessao(idSessao);
 
         validarStatusDaSessao(sessao);
 
-        long votosSim = buscarQuantidadePorTipo(sessao,TipoVoto.SIM);
-        long votosNao = buscarQuantidadePorTipo(sessao,TipoVoto.NAO);
+        long votosSim = buscarQuantidadePorTipo(sessao, TipoVoto.SIM);
+        long votosNao = buscarQuantidadePorTipo(sessao, TipoVoto.NAO);
         long totalVotos = votosSim + votosNao;
 
         return mapper.toResultadoSessaoDto(sessao, votosSim, votosNao, totalVotos, sessao.getStatusVotacao());
@@ -80,8 +80,8 @@ public class SessaoVotacaoService {
     }
 
     public void apurarResultado(SessaoVotacao sessao) {
-        long votosSim = buscarQuantidadePorTipo(sessao,TipoVoto.SIM);
-        long votosNao = buscarQuantidadePorTipo(sessao,TipoVoto.NAO);
+        long votosSim = buscarQuantidadePorTipo(sessao, TipoVoto.SIM);
+        long votosNao = buscarQuantidadePorTipo(sessao, TipoVoto.NAO);
 
         if (votosSim > votosNao) {
             sessao.setStatusVotacao(StatusVotacao.APROVADO);
@@ -97,10 +97,10 @@ public class SessaoVotacaoService {
     private SessaoVotacao buscarSessao(Long idSessao) {
         return sessaoRepository.findById(idSessao)
                 .orElseThrow(() ->
-                        new EntityNotFoundException("Sessão de votação não encontrada (id=" + idSessao + ")"));
+                        new RecursoNaoEncontradoException("Sessão de votação não encontrada (id=" + idSessao + ")"));
     }
 
-    private long buscarQuantidadePorTipo (SessaoVotacao sessao, TipoVoto tipoVoto){
+    private long buscarQuantidadePorTipo(SessaoVotacao sessao, TipoVoto tipoVoto) {
         return votoRepository.countBySessaoVotacaoAndTipoVoto(sessao, tipoVoto);
     }
 
