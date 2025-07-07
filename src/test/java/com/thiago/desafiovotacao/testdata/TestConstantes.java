@@ -35,6 +35,9 @@ public final class TestConstantes {
     public static final TipoVoto VOTO_SIM = TipoVoto.SIM;
     public static final TipoVoto VOTO_NAO = TipoVoto.NAO;
 
+    public static final String CPF_VALIDO = "193.821.170-75";
+    public static final String CPF_INVALIDO = "193.821.550-76";
+
     public static final String MSG_ERRO_MAPEAR = "erro de mapeamento";
     public static final String MSG_ERRO_SAVE = "erro no save";
 

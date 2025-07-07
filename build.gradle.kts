@@ -2,6 +2,7 @@ plugins {
 	java
 	id("org.springframework.boot") version "3.5.3"
 	id("io.spring.dependency-management") version "1.1.7"
+	id("jacoco")
 }
 
 group = "com.thiago"
@@ -59,4 +60,30 @@ tasks.named<Test>("test") {
 		events("passed")
 	}
 }
+
+tasks.jacocoTestCoverageVerification {
+	dependsOn(tasks.jacocoTestReport)
+
+	violationRules {
+		rule {
+			element = "CLASS"
+			includes = listOf("com.thiago.desafiovotacao.service.*")
+
+			limit {
+				counter = "INSTRUCTION"
+				value = "COVEREDRATIO"
+				minimum = "0.80".toBigDecimal()
+			}
+		}
+	}
+
+	classDirectories.setFrom(
+		files(classDirectories.files.map {
+			fileTree(it) {
+				include("com/thiago/desafiovotacao/service/**/*.class")
+			}
+		})
+	)
+}
+
 
