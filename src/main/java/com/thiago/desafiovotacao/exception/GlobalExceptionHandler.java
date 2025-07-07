@@ -1,7 +1,8 @@
 package com.thiago.desafiovotacao.exception;
 
+import com.thiago.desafiovotacao.cpf.dto.ValidadorCpfDto;
+import com.thiago.desafiovotacao.cpf.enums.ValidaVoto;
 import com.thiago.desafiovotacao.model.dtos.ErrorResponseDto;
-import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -33,19 +34,23 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(msg, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponseDto> handleConstraint(ConstraintViolationException ex) {
-        String msg = ex.getConstraintViolations()
-                .stream()
-                .map(v -> v.getPropertyPath() + ": " + v.getMessage())
-                .collect(Collectors.joining("; "));
-        return buildErrorResponse(msg, HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleAll(Exception ex) {
         return buildErrorResponse("Erro interno do servidor", HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler({
+            CpfNotFoundException.class,
+            jakarta.validation.ConstraintViolationException.class,
+            CpfUnableToVoteException.class
+    })
+    public ResponseEntity<ValidadorCpfDto> handleCpfNotAllowed(Exception ex) {
+        ValidadorCpfDto dto = new ValidadorCpfDto(ValidaVoto.UNABLE_TO_VOTE);
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(dto);
+    }
+
 
     private ResponseEntity<ErrorResponseDto> buildErrorResponse(String message, HttpStatus status) {
         ErrorResponseDto body = new ErrorResponseDto(
