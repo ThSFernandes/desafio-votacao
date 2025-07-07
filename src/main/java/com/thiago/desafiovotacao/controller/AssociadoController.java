@@ -2,6 +2,7 @@ package com.thiago.desafiovotacao.controller;
 
 import com.thiago.desafiovotacao.model.dtos.AssociadoDto;
 import com.thiago.desafiovotacao.service.AssociadoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ public class AssociadoController {
     }
 
     @PostMapping
-    public ResponseEntity<AssociadoDto> criarAssociado(@RequestBody AssociadoDto associado) {
+    public ResponseEntity<AssociadoDto> criarAssociado(@Valid @RequestBody AssociadoDto associado) {
         AssociadoDto associadoDto = associadoService.criarAssociado(associado);
         return new ResponseEntity<>(associadoDto, HttpStatus.CREATED);
     }

@@ -1,6 +1,6 @@
 package com.thiago.desafiovotacao.model.dtos;
 
-import com.thiago.desafiovotacao.model.entity.SessaoVotacao;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.thiago.desafiovotacao.model.enums.TipoVoto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class VotacaoDto {
 
     private Long id;

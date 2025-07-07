@@ -2,6 +2,7 @@ package com.thiago.desafiovotacao.controller;
 
 import com.thiago.desafiovotacao.model.dtos.PautaDto;
 import com.thiago.desafiovotacao.service.PautaService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ public class PautaController {
     private final PautaService pautaService;
 
     @PostMapping
-    public ResponseEntity<PautaDto> criarPauta(@RequestBody PautaDto pauta) {
+    public ResponseEntity<PautaDto> criarPauta(@Valid @RequestBody PautaDto pauta) {
         PautaDto pautaDto = pautaService.criarPauta(pauta);
         return new ResponseEntity<>(pautaDto, HttpStatus.CREATED);
     }

@@ -22,13 +22,13 @@ public class Pauta {
     @Column(name = "ID_PAUTA")
     private Long id;
 
-    @Column(name = "TITULO")
+    @Column(name = "TITULO", nullable = false, length = 120)
     private String titulo;
 
-    @Column(name = "DESCRICAO")
+    @Column(name = "DESCRICAO", nullable = false, length = 200)
     private String descricao;
 
-    @Column(name = "DATA_CRIACAO")
+    @Column(name = "DATA_CRIACAO", nullable = false, updatable = false)
     private LocalDateTime dataCriacao = LocalDateTime.now();
 
 }

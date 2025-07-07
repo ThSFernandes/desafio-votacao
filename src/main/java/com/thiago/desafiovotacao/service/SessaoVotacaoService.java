@@ -38,7 +38,7 @@ public class SessaoVotacaoService {
 
         int duracao = DURACAO_EM_MINUTOS;
         Integer minutos = dto.getDuracaoMinutos();
-        if (minutos != null && minutos > 0) {
+        if (minutos != null) {
             duracao = minutos;
         }
 

@@ -24,17 +24,17 @@ public class SessaoVotacao {
     @Column(name = "ID_SESSAO_VOTOS")
     private Long id;
 
-    @Column(name = "DATA_INICIO_VOTACAO")
+    @Column(name = "DATA_INICIO_VOTACAO", nullable = false, updatable = false)
     private LocalDateTime dataDeCriacao;
 
-    @Column(name = "DATA_TERMINO_VOTACAO")
+    @Column(name = "DATA_TERMINO_VOTACAO", nullable = false)
     private LocalDateTime dataDeTermino;
 
     @Enumerated(EnumType.STRING)
     private StatusVotacao statusVotacao = StatusVotacao.EM_ANDAMENTO;
 
     @ManyToOne
-    @JoinColumn(name = "ID_PAUTA", referencedColumnName = "ID_PAUTA")
+    @JoinColumn(name = "ID_PAUTA", referencedColumnName = "ID_PAUTA", nullable = false)
     private Pauta pauta;
 
 

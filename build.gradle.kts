@@ -36,6 +36,8 @@ dependencies {
 
 	annotationProcessor("org.projectlombok:lombok-mapstruct-binding:0.2.0")
 
+	implementation ("org.springframework.boot:spring-boot-starter-validation")
+
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")

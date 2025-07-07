@@ -31,10 +31,10 @@ public class Voto {
     private LocalDateTime dataCriacao = LocalDateTime.now();
 
     @ManyToOne
-    @JoinColumn(name = "ID_ASSOCIADO", referencedColumnName = "ID_ASSOCIADO")
+    @JoinColumn(name = "ID_ASSOCIADO", referencedColumnName = "ID_ASSOCIADO", nullable = false)
     private Associado associado;
 
     @ManyToOne
-    @JoinColumn(name = "ID_SESSAO_VOTOS", referencedColumnName = "ID_SESSAO_VOTOS")
+    @JoinColumn(name = "ID_SESSAO_VOTOS", referencedColumnName = "ID_SESSAO_VOTOS", nullable = false)
     private SessaoVotacao sessaoVotacao;
 }

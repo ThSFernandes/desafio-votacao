@@ -1,6 +1,5 @@
 package com.thiago.desafiovotacao.model.dtos;
 
-import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,9 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CriacaoSessaoVotacaoDto {
-
-    @Positive(message = "Duração deve ser maior que zero")
-    private Integer duracaoMinutos;
-
+public class ErrorResponseDto {
+    private String timestamp;
+    private int status;
+    private String error;
+    private String message;
 }

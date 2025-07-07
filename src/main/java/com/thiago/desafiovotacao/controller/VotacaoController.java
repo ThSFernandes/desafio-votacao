@@ -4,6 +4,7 @@ import com.thiago.desafiovotacao.model.dtos.CriarVotacaoDto;
 import com.thiago.desafiovotacao.model.dtos.VotacaoDto;
 import com.thiago.desafiovotacao.model.dtos.VotoDetalhadoDto;
 import com.thiago.desafiovotacao.service.VotacaoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +20,7 @@ public class VotacaoController {
     @PostMapping("/{idSesao}/associados/{idAssociado}/votos")
     public ResponseEntity<VotacaoDto> criarVoto(@PathVariable Long idSesao,
                                                 @PathVariable Long idAssociado,
-                                                @RequestBody CriarVotacaoDto dto) {
+                                                @Valid @RequestBody CriarVotacaoDto dto) {
         VotacaoDto votacaoDto = votacaoService.criarVoto(idSesao, idAssociado, dto);
         return new ResponseEntity<>(votacaoDto, HttpStatus.CREATED);
     }

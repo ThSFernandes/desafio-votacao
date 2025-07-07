@@ -1,6 +1,8 @@
 package com.thiago.desafiovotacao.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,10 +23,12 @@ public class Associado {
     @Column(name = "ID_ASSOCIADO")
     private Long id;
 
-    @Column(name = "NOME")
+    @NotBlank(message = "Nome é obrigatório")
+    @Size(max = 50, message = "Nome pode ter no máximo 50 caracteres")
+    @Column(name = "NOME", nullable = false, length = 50)
     private String nome;
 
-    @Column(name = "CPF")
+    @Column(name = "CPF", nullable = false, length = 11)
     private String cpf;
 
 }

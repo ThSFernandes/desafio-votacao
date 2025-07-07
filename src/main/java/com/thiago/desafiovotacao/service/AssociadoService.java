@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+
 public class AssociadoService {
 
     private final AssociadoRepository associadoRepository;
