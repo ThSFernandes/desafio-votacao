@@ -27,7 +27,6 @@ repositories {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("com.oracle.database.jdbc:ojdbc11:21.1.0.0")
 
 	implementation("org.mapstruct:mapstruct:1.6.3")
 	annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
@@ -44,6 +43,10 @@ dependencies {
 
 	testImplementation ("org.junit.jupiter:junit-jupiter:5.7.1")
 	testRuntimeOnly ("org.junit.platform:junit-platform-launcher")
+
+	implementation("org.flywaydb:flyway-core:10.16.0")
+	implementation("org.flywaydb:flyway-database-oracle:10.16.0")
+	implementation("com.oracle.database.jdbc:ojdbc11:21.9.0.0")
 
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
