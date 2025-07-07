@@ -35,6 +35,7 @@ public class VotacaoService {
 
     @Transactional
     public VotacaoDto criarVoto(Long idSessao, Long idAssociado, CriarVotacaoDto dto) {
+        log.info("Iniciando registro de voto. SessãoID={}, AssociadoID={}", idSessao, idAssociado);
 
         SessaoVotacao sessao = buscarSessao(idSessao);
         verificarStatusDaSessao(sessao);
@@ -42,6 +43,7 @@ public class VotacaoService {
         Associado associado = buscarAssociado(idAssociado);
 
         if (votoRepository.existsByAssociadoAndSessaoVotacao(associado, sessao)) {
+            log.warn("Associado já votou nesta sessão. SessãoID={}, AssociadoID={}", idSessao, idAssociado);
             throw new SessaoException("Associado já registrou voto nesta sessão.");
         }
 
@@ -49,55 +51,65 @@ public class VotacaoService {
         voto.setAssociado(associado);
         voto.setSessaoVotacao(sessao);
         voto = votoRepository.save(voto);
-        log.info("Voto salvo (id={}, sessao={}, associado={})",
+
+        log.info("Voto registrado com sucesso. VotoID={}, SessãoID={}, AssociadoID={}",
                 voto.getId(), idSessao, idAssociado);
 
         return mapper.toDto(voto);
     }
 
     public VotacaoDto buscarVotoPorId(Long votoId) {
+        log.info("Buscando voto por ID. VotoID={}", votoId);
+
         Voto voto = votoRepository.findById(votoId)
-                .orElseThrow(() -> new RecursoNaoEncontradoException(
-                        "Voto não encontrado (id=" + votoId + ")"));
+                .orElseThrow(() -> {
+                    log.warn("Voto não encontrado. VotoID={}", votoId);
+                    return new RecursoNaoEncontradoException("Voto não encontrado (id=" + votoId + ")");
+                });
+
         return mapper.toDto(voto);
     }
 
     public VotoDetalhadoDto listarVotosDoAssociado(Long idAssociado) {
+        log.info("Listando votos do associado. AssociadoID={}", idAssociado);
 
         Associado associado = buscarAssociado(idAssociado);
         List<Voto> votos = votoRepository.findByAssociado(associado);
         List<ItemVotoDto> itens = mapper.toItemDtoList(votos);
 
-        VotoDetalhadoDto dto =
-                new VotoDetalhadoDto(associado.getId(), associado.getNome(), itens);
+        log.info("Total de votos encontrados para AssociadoID={}: {}", idAssociado, itens.size());
 
-        log.info("Encontrados {} votos para associado {}", itens.size(), idAssociado);
-        return dto;
+        return new VotoDetalhadoDto(associado.getId(), associado.getNome(), itens);
     }
 
     private SessaoVotacao buscarSessao(Long id) {
         return sessaoRepository.findById(id)
-                .orElseThrow(() ->
-                        new RecursoNaoEncontradoException("Sessão não encontrada (id=" + id + ")"));
+                .orElseThrow(() -> {
+                    log.warn("Sessão não encontrada. SessãoID={}", id);
+                    return new RecursoNaoEncontradoException("Sessão não encontrada (id=" + id + ")");
+                });
     }
 
     private Associado buscarAssociado(Long id) {
         return associadoRepository.findById(id)
-                .orElseThrow(() ->
-                        new RecursoNaoEncontradoException("Associado não encontrado (id=" + id + ")"));
+                .orElseThrow(() -> {
+                    log.warn("Associado não encontrado. AssociadoID={}", id);
+                    return new RecursoNaoEncontradoException("Associado não encontrado (id=" + id + ")");
+                });
     }
 
     private void verificarStatusDaSessao(SessaoVotacao sessao) {
-
         boolean statusAberto = sessao.getStatusVotacao() == StatusVotacao.EM_ANDAMENTO;
 
         if (!statusAberto) {
+            log.warn("Tentativa de votar em sessão encerrada. SessãoID={}", sessao.getId());
             throw new SessaoException("Sessão encerrada; consulte o resultado.");
         }
 
-        LocalDateTime termino =  sessao.getDataDeTermino();
+        LocalDateTime termino = sessao.getDataDeTermino();
 
         if (termino != null && LocalDateTime.now().isAfter(termino)) {
+            log.info("Sessão expirada. Apurando resultado automaticamente. SessãoID={}", sessao.getId());
             sessaoVotacaoService.apurarResultado(sessao);
             throw new SessaoException("Sessão encerrada; consulte o resultado.");
         }

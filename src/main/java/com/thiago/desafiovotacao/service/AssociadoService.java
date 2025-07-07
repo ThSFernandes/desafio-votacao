@@ -12,32 +12,46 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-
 public class AssociadoService {
 
     private final AssociadoRepository associadoRepository;
     private final AssociadoMapper mapper;
 
     public AssociadoDto criarAssociado(AssociadoDto dto) {
-        log.info("DTO do associado recebido: {}", dto);
+        log.info("Iniciando criação de associado.");
+
         Associado entidade = mapper.toEntity(dto);
         entidade = associadoRepository.save(entidade);
+
+        log.info("Associado criado com sucesso. ID={}", entidade.getId());
+
         return mapper.toDto(entidade);
     }
 
     public AssociadoDto buscarAssociado(Long id) {
+        log.info("Buscando associado por ID={}", id);
+
         return associadoRepository.findById(id)
-                .map(mapper::toDto)
-                .orElseThrow(() ->
-                        new RecursoNaoEncontradoException("Associado não encontrado (id=" + id + ")"));
+                .map(associado -> {
+                    log.info("Associado encontrado. ID={}", id);
+                    return mapper.toDto(associado);
+                })
+                .orElseThrow(() -> {
+                    log.warn("Associado não encontrado. ID={}", id);
+                    return new RecursoNaoEncontradoException("Associado não encontrado (id=" + id + ")");
+                });
     }
 
     public void deletarAssociado(Long id) {
+        log.info("Solicitação de exclusão do associado. ID={}", id);
+
         if (!associadoRepository.existsById(id)) {
+            log.warn("Tentativa de deletar associado inexistente. ID={}", id);
             throw new RecursoNaoEncontradoException("Associado não encontrado (id=" + id + ")");
         }
-        associadoRepository.deleteById(id);
-        log.info("Associado deletado com sucesso ! (id=" + id + ")");
-    }
 
+        associadoRepository.deleteById(id);
+        log.info("Associado deletado com sucesso. ID={}", id);
+    }
 }
+
