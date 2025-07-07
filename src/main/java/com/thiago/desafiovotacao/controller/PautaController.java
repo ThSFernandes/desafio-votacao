@@ -6,17 +6,18 @@ import com.thiago.desafiovotacao.service.PautaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/pauta")
+@RequestMapping("/v1/pauta")
 public class PautaController implements PautaControllerDoc {
 
     private final PautaService pautaService;
 
-    @PostMapping
+    @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PautaDto> criarPauta(@Valid @RequestBody PautaDto pauta) {
         PautaDto pautaDto = pautaService.criarPauta(pauta);
         return new ResponseEntity<>(pautaDto, HttpStatus.CREATED);

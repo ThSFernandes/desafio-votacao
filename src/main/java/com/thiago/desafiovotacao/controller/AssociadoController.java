@@ -7,13 +7,14 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/associado")
+@RequestMapping("/v1/associado")
 public class AssociadoController implements AssociadoControllerDoc {
 
     private final AssociadoService associadoService;
@@ -24,7 +25,7 @@ public class AssociadoController implements AssociadoControllerDoc {
         return new ResponseEntity<>(associadoDto, HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping(value = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AssociadoDto> criarAssociado(@Valid @RequestBody AssociadoDto associado) {
         AssociadoDto associadoDto = associadoService.criarAssociado(associado);
         return new ResponseEntity<>(associadoDto, HttpStatus.CREATED);

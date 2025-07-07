@@ -8,17 +8,19 @@ import com.thiago.desafiovotacao.service.SessaoVotacaoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/sessao-votacao")
+@RequestMapping("/v1/sessao-votacao")
 public class SessaoVotacaoController implements SessaoVotacaoControllerDoc {
 
     private final SessaoVotacaoService sessaoVotacaoService;
 
-    @PostMapping("/{idPauta}/sessao")
+    @PostMapping(value = "/{idPauta}/sessao",consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<SessaoVotacaoDto> criarSessaoVotacao(
             @PathVariable Long idPauta,
             @Valid @RequestBody CriacaoSessaoVotacaoDto dto) {
